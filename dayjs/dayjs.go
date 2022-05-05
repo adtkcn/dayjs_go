@@ -23,6 +23,7 @@ func Dayjs(timeStr ...string) *DayjsStruct {
 	dayTime := &DayjsStruct{}
 
 	if len(timeStr) == 1 {
+		// 待区分时间戳和字符串时间
 		dayTime.Parse(timeStr[0])
 	} else {
 		dayTime.Now()
