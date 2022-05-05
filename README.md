@@ -1,4 +1,10 @@
-## 实现的函数
+## Installation, with go 1.18
+
+```
+go get github.com/adtkcn/dayjs_go
+```
+
+## 实现的函数 Implemented functions
 
 1. Format
 2. Add
@@ -12,15 +18,15 @@
 10. IsLeapYear
 11. DaysInMonth
 
-## 文档参考 dayjs
+## 文档参考 dayjs, Document reference dayjs
 
 https://dayjs.fenxianglu.cn/
 
-## 调用示例
+## 调用示例 example
 
 ```go
 import (
-	"dayjs_go/dayjs"
+	"github.com/adtkcn/dayjs_go/dayjs"
 	"fmt"
 )
 func main() {
