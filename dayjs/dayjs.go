@@ -43,7 +43,7 @@ func Dayjs(timeStr ...interface{}) *DayjsStruct {
 }
 
 // 前置补零
-func ZeroFill[T any](str T, resultLen int) string {
+func ZeroFill(str interface{}, resultLen int) string {
 	newStr := fmt.Sprintf("%v", str)
 	if len(newStr) > resultLen || resultLen <= 0 {
 		return newStr

@@ -24,14 +24,14 @@ func main() {
 
 	fmt.Println(dayjs.Dayjs(1651770449).Format())
 	// dayjs.Dayjs("2022年02月28").ValueOf() //Unix纪元以来的毫秒数
-	// dayjs.Dayjs("2022年02月28").Unix()    //Unix纪元以来的秒数
+	// dayjs.Dayjs("2022年02月28").Unix() //Unix纪元以来的秒数
 
 	// fmt.Printf("%+v", dayTime)
 
 	// fmt.Println(dayTime.Year)
 
 	// fmt.Println(dayTime.Format())
-	// fmt.Println(dayjs.Dayjs("2022年02月28").Add(2, "date").Add(2, "year").Add(2, "month").Format("YYYY年MM月DD HH时mm分ss秒"))
+	fmt.Println(dayjs.Dayjs("2022年02月28").Add(2, "date").Add(2, "year").Add(2, "month").Format("YYYY年MM月DD HH时mm分ss秒"))
 
 	// fmt.Println(dayjs.Dayjs("2022年02月28").Subtract(-1, "month").Subtract(2, "hour").Format("YYYY年MM月DD HH时mm分ss秒"))
 
