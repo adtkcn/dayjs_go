@@ -22,6 +22,7 @@ go get github.com/adtkcn/dayjs_go
 14. Set
 15. Get
 16. Weekday // 星期几，0 是星期日
+17. ToArray
 
 | Type   | 说明                     |
 | ------ | ------------------------ |

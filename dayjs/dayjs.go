@@ -122,13 +122,16 @@ func (t *DayjsStruct) Add(num int, Type string) *DayjsStruct {
 	h1, _ := time.ParseDuration("1h")
 	m1, _ := time.ParseDuration("1m")
 	s1, _ := time.ParseDuration("1s")
-	switch Type {
+	typeStr := strings.ToLower(Type)
+	switch typeStr {
 	case "year":
 		t.Time = t.Time.AddDate(num, 0, 0)
 	case "month":
 		t.Time = t.Time.AddDate(0, num, 0)
-	case "day":
+	case "date":
 		t.Time = t.Time.AddDate(0, 0, num)
+	case "day":
+		panic("Add 暂不支持 day")
 	case "hour":
 		t.Time = t.Time.Add(h1 * time.Duration(num))
 	case "minute":
@@ -146,13 +149,16 @@ func (t *DayjsStruct) Subtract(num int, Type string) *DayjsStruct {
 	h1, _ := time.ParseDuration("-1h")
 	m1, _ := time.ParseDuration("-1m")
 	s1, _ := time.ParseDuration("-1s")
-	switch Type {
+	typeStr := strings.ToLower(Type)
+	switch typeStr {
 	case "year":
 		t.Time = t.Time.AddDate(-num, 0, 0)
 	case "month":
 		t.Time = t.Time.AddDate(0, -num, 0)
-	case "day":
+	case "date":
 		t.Time = t.Time.AddDate(0, 0, -num)
+	case "day":
+		panic("Add 暂不支持 day")
 	case "hour":
 		t.Time = t.Time.Add(h1 * time.Duration(num))
 	case "minute":
@@ -257,12 +263,51 @@ func (t *DayjsStruct) IsSameOrAfter(t2 *DayjsStruct) bool {
 	return t.Time.After(t2.Time) || t.Time.Equal(t2.Time)
 }
 
+// 差异
+func (t *DayjsStruct) Diff(t2 *DayjsStruct, Type ...string) int64 {
+	typeStr := "millisecond"
+	if len(Type) == 1 && Type[0] != "" {
+		typeStr = strings.ToLower(Type[0])
+	}
+	// diffTime :=t.ValueOf() - t2.ValueOf()
+	switch typeStr {
+	case "millisecond":
+		return t.ValueOf() - t2.ValueOf()
+	case "second":
+		return t.Unix() - t2.Unix()
+	case "minute":
+		return (t.Unix() - t2.Unix()) / 60
+	case "hour":
+		return (t.Unix() - t2.Unix()) / 60 / 60
+	case "date":
+		return (t.Unix() - t2.Unix()) / 60 / 60 / 24
+	case "day":
+		panic("Diff 暂不支持 day")
+	case "week":
+		panic("Diff 暂不支持 week")
+	case "quarter":
+		panic("Diff 暂不支持 quarter")
+	// 	return ( t.Unix() - t2.Unix()) / 60 / 60 / 24 / 7
+	case "month":
+		return (t.Unix() - t2.Unix()) / 60 / 60 / 24 / 30
+	case "year":
+		return (t.Unix() - t2.Unix()) / 60 / 60 / 24 / 365
+	}
+
+	return t.ValueOf() - t2.ValueOf()
+}
+
 // 是否闰年
 func (t *DayjsStruct) IsLeapYear() bool {
 	if t.Year%4 == 0 && t.Year%100 != 0 || t.Year%400 == 0 {
 		return true
 	}
 	return false
+}
+
+// 转数组
+func (t *DayjsStruct) ToArray() []int {
+	return []int{t.Year, t.Month, t.Date, t.Hour, t.Minute, t.Second}
 }
 
 //获取某月天数
