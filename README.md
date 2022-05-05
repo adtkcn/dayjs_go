@@ -17,6 +17,21 @@ go get github.com/adtkcn/dayjs_go
 9. IsSameOrAfter
 10. IsLeapYear
 11. DaysInMonth
+12. Max
+13. Min
+14. Set
+15. Get
+16. Weekday // 星期几，0 是星期日
+
+| Type   | 说明                     |
+| ------ | ------------------------ |
+| date   | 日期                     |
+| day    | 星期(星期日 0，星期六 6) |
+| month  | 月份(0-11)               |
+| year   | 年                       |
+| hour   | 小时                     |
+| minute | 分钟                     |
+| second | 秒                       |
 
 ## 文档参考 dayjs, Document reference dayjs
 

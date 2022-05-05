@@ -8,21 +8,22 @@ import (
 )
 
 type DayjsStruct struct {
-	Year   int //年
-	Month  int //月
-	Day    int //日
-	Hour   int //小时
-	Minute int //分钟
-	Second int //秒
+	Year   int `json:"year"`   //年
+	Month  int `json:"month"`  //月
+	Date   int `json:"date"`   //日
+	Day    int `json:"day"`    //周几
+	Hour   int `json:"hour"`   //小时
+	Minute int `json:"minute"` //分钟
+	Second int `json:"second"` //秒
 
 	Time time.Time
 }
 
-func Dayjs(args ...string) *DayjsStruct {
+func Dayjs(timeStr ...string) *DayjsStruct {
 	dayTime := &DayjsStruct{}
 
-	if len(args) == 1 {
-		dayTime.Parse(args[0])
+	if len(timeStr) == 1 {
+		dayTime.Parse(timeStr[0])
 	} else {
 		dayTime.Now()
 	}
@@ -31,7 +32,7 @@ func Dayjs(args ...string) *DayjsStruct {
 }
 
 // 前置补零
-func ZeroFillByStr[T any](str T, resultLen int) string {
+func ZeroFill[T any](str T, resultLen int) string {
 	newStr := fmt.Sprintf("%v", str)
 	if len(newStr) > resultLen || resultLen <= 0 {
 		return newStr
@@ -47,7 +48,6 @@ func ZeroFillByStr[T any](str T, resultLen int) string {
 func (t *DayjsStruct) Parse(str string) *DayjsStruct {
 	re := regexp.MustCompile("[0-9]+")
 	timeArr := re.FindAllString(str, -1) //-1以表明您想要全部
-	fmt.Println(timeArr)
 	if len(timeArr) > 6 || len(timeArr) == 0 {
 		panic("时间格式最少需要一个时间")
 	}
@@ -60,17 +60,17 @@ func (t *DayjsStruct) Parse(str string) *DayjsStruct {
 
 	for key, val := range timeArr {
 		if key == 0 {
-			year = ZeroFillByStr(val, 4)
+			year = ZeroFill(val, 4)
 		} else if key == 1 {
-			month = ZeroFillByStr(val, 2)
+			month = ZeroFill(val, 2)
 		} else if key == 2 {
-			day = ZeroFillByStr(val, 2)
+			day = ZeroFill(val, 2)
 		} else if key == 3 {
-			hour = ZeroFillByStr(val, 2)
+			hour = ZeroFill(val, 2)
 		} else if key == 4 {
-			minute = ZeroFillByStr(val, 2)
+			minute = ZeroFill(val, 2)
 		} else if key == 5 {
-			second = ZeroFillByStr(val, 2)
+			second = ZeroFill(val, 2)
 		}
 	}
 	timeStr := year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second
@@ -93,10 +93,12 @@ func (t *DayjsStruct) Now() *DayjsStruct {
 func (t *DayjsStruct) SetTime() {
 	t.Year = t.Time.Year()        //年
 	t.Month = int(t.Time.Month()) //月
-	t.Day = t.Time.Day()          //日
+	t.Date = t.Time.Day()         //日
 	t.Hour = t.Time.Hour()        //小时
 	t.Minute = t.Time.Minute()    //分钟
 	t.Second = t.Time.Second()    //秒
+
+	t.Day = int(t.Time.Weekday())
 }
 
 // 格式化 YYYY-MM-DD HH:mm:ss
@@ -106,11 +108,11 @@ func (t *DayjsStruct) Format(format ...string) string {
 		formatStr = format[0]
 	}
 	timeStr := strings.ReplaceAll(formatStr, "YYYY", fmt.Sprint(t.Year))
-	timeStr = strings.ReplaceAll(timeStr, "MM", ZeroFillByStr(t.Month, 2))
-	timeStr = strings.ReplaceAll(timeStr, "DD", ZeroFillByStr(t.Day, 2))
-	timeStr = strings.ReplaceAll(timeStr, "HH", ZeroFillByStr(t.Hour, 2))
-	timeStr = strings.ReplaceAll(timeStr, "mm", ZeroFillByStr(t.Minute, 2))
-	timeStr = strings.ReplaceAll(timeStr, "ss", ZeroFillByStr(t.Second, 2))
+	timeStr = strings.ReplaceAll(timeStr, "MM", ZeroFill(t.Month, 2))
+	timeStr = strings.ReplaceAll(timeStr, "DD", ZeroFill(t.Date, 2))
+	timeStr = strings.ReplaceAll(timeStr, "HH", ZeroFill(t.Hour, 2))
+	timeStr = strings.ReplaceAll(timeStr, "mm", ZeroFill(t.Minute, 2))
+	timeStr = strings.ReplaceAll(timeStr, "ss", ZeroFill(t.Second, 2))
 
 	return timeStr
 }
@@ -163,12 +165,57 @@ func (t *DayjsStruct) Subtract(num int, Type string) *DayjsStruct {
 	return t
 }
 
-// // 设置年月日时分秒
-// func (t *DayjsStruct) Set(year int, month int, day int, hour int, minute int, second int) *DayjsStruct {
-// 	t.Time = time.Date(year, time.Month(month), day, hour, minute, second, 0, time.Local)
-// 	t.SetTime()
-// 	return t
-// }
+// 设置年月日时分秒，
+func (t *DayjsStruct) Set(Type string, value int) *DayjsStruct {
+	typeStr := strings.ToLower(Type)
+	switch typeStr {
+	case "year":
+		t.Time = time.Date(value, time.Month(t.Month), t.Date, t.Hour, t.Minute, t.Second, 0, time.Local)
+	case "month":
+		t.Time = time.Date(t.Year, time.Month(value), t.Date, t.Hour, t.Minute, t.Second, 0, time.Local)
+	// case "day":
+	// 	t.Time = time.Date(t.Year, time.Month(t.Month), value, t.Hour, t.Minute, t.Second, 0, time.Local)
+	case "date":
+		t.Time = time.Date(t.Year, time.Month(t.Month), value, t.Hour, t.Minute, t.Second, 0, time.Local)
+	case "hour":
+		t.Time = time.Date(t.Year, time.Month(t.Month), t.Date, value, t.Minute, t.Second, 0, time.Local)
+	case "minute":
+		t.Time = time.Date(t.Year, time.Month(t.Month), t.Date, t.Hour, value, t.Second, 0, time.Local)
+	case "second":
+		t.Time = time.Date(t.Year, time.Month(t.Month), t.Date, t.Hour, t.Minute, value, 0, time.Local)
+	default:
+		panic("Dayjs().Set(Type,value) Type Error: " + Type)
+	}
+	t.SetTime()
+	return t
+}
+
+func (t *DayjsStruct) Get(Type string) int64 {
+	typeStr := strings.ToLower(Type)
+	switch typeStr {
+	case "year":
+		return int64(t.Year)
+	case "month":
+		return int64(t.Month)
+	case "day":
+		return int64(t.Weekday())
+	case "date":
+		return int64(t.Date)
+	case "hour":
+		return int64(t.Hour)
+	case "minute":
+		return int64(t.Minute)
+	case "second":
+		return int64(t.Second)
+	}
+	panic("Dayjs().Get(Type) Type Error ：" + Type)
+	// return int64(0)
+}
+
+// 周几0-6，0是星期日
+func (t *DayjsStruct) Weekday() int64 {
+	return int64(t.Day)
+}
 
 // Unix纪元以来的毫秒数
 func (t *DayjsStruct) ValueOf() int64 {
@@ -219,7 +266,7 @@ func (t *DayjsStruct) IsLeapYear() bool {
 }
 
 //获取某月天数
-func (t *DayjsStruct) DaysInMonth() int {
+func (t *DayjsStruct) DaysInMonth() int64 {
 	year := t.Year
 	month := t.Month
 	// 有31天的月份
@@ -233,7 +280,7 @@ func (t *DayjsStruct) DaysInMonth() int {
 		12: true,
 	}
 	if day31[month] == true {
-		return 31
+		return int64(31)
 	}
 	// 有30天的月份
 	day30 := map[int]bool{
@@ -243,23 +290,41 @@ func (t *DayjsStruct) DaysInMonth() int {
 		11: true,
 	}
 	if day30[month] == true {
-		return 30
+		return int64(30)
 	}
 	// 计算是平年还是闰年
 	if (year%4 == 0 && year%100 != 0) || year%400 == 0 {
 		// 得出2月的天数
-		return 29
+		return int64(29)
 	}
 	// 得出2月的天数
-	return 28
+	return int64(28)
 }
 
-// func main() {
-// 	dayTime := Dayjs()
-// 	fmt.Println(dayTime.format("YYYY-MM-DD HH:mm:ss"))
-// 	fmt.Println(Dayjs("2022年02月28").Add(2, "day").Add(2, "year").Add(2, "month").format("YYYY年MM月DD HH时mm分ss秒"))
+// 获取最大时间
+func Max(dayjs ...*DayjsStruct) *DayjsStruct {
+	var max DayjsStruct
+	for k, v := range dayjs {
+		if k == 0 {
+			max = *v
+		}
+		if v.IsAfter(&max) {
+			max = *v
+		}
+	}
+	return &max
+}
 
-// 	fmt.Println(Dayjs("2022年02月28").Subtract(-1, "month").Subtract(2, "hour").format("YYYY年MM月DD HH时mm分ss秒"))
-
-// 	fmt.Println(Dayjs("2022年02月28").Subtract(-2, "month").Subtract(2, "month").DaysInMonth())
-// }
+// 获取最小时间
+func Min(dayjs ...*DayjsStruct) *DayjsStruct {
+	var min DayjsStruct
+	for k, v := range dayjs {
+		if k == 0 {
+			min = *v
+		}
+		if v.IsBefore(&min) {
+			min = *v
+		}
+	}
+	return &min
+}
