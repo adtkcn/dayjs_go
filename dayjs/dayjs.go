@@ -19,12 +19,22 @@ type DayjsStruct struct {
 	Time time.Time
 }
 
-func Dayjs(timeStr ...string) *DayjsStruct {
+func Dayjs(timeStr ...interface{}) *DayjsStruct {
 	dayTime := &DayjsStruct{}
 
 	if len(timeStr) == 1 {
 		// 待区分时间戳和字符串时间
-		dayTime.Parse(timeStr[0])
+
+		switch timeStr[0].(type) {
+		case string:
+			dayTime.Parse(fmt.Sprint(timeStr[0]))
+		case int64:
+			dayTime.ParseUnix(timeStr[0].(int64))
+		case int:
+			dayTime.ParseUnix(int64(timeStr[0].(int)))
+		default:
+			panic("时间格式有误")
+		}
 	} else {
 		dayTime.Now()
 	}
@@ -85,9 +95,17 @@ func (t *DayjsStruct) Parse(str string) *DayjsStruct {
 	return t
 }
 
+// 解析秒级时间戳
+func (t *DayjsStruct) ParseUnix(unix int64) *DayjsStruct {
+	t.Time = time.Unix(unix, 0) // 一个参数是时间戳（秒），第二个参数是纳秒，设置0即可
+	fmt.Println("unix", unix, t.Time)
+	t.SetTime()
+	return t
+}
+
 // 设置为当前时间
 func (t *DayjsStruct) Now() *DayjsStruct {
-	t.Time = time.Now() //获取当前时间
+	t.Time = time.Now() // 获取当前时间
 	t.SetTime()
 	return t
 }
