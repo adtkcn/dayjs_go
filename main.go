@@ -20,7 +20,7 @@ func main() {
 	fmt.Println(minTime.Get("Year"))
 
 	fmt.Println(dayjs.Dayjs().Add(1, "date").Diff(dayjs.Dayjs().Add(3, "date")))
-	fmt.Println(dayjs.Dayjs().Add(1, "date").Diff(dayjs.Dayjs().Add(3, "date"), "date"))
+	fmt.Println(dayjs.Dayjs().Add(1, "date").Diff(dayjs.Dayjs().Add(3, "date"), "year"))
 
 	// dayjs.Dayjs("2022年02月28").ValueOf() //Unix纪元以来的毫秒数
 	// dayjs.Dayjs("2022年02月28").Unix()    //Unix纪元以来的秒数
