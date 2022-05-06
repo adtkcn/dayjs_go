@@ -12,7 +12,7 @@ go get github.com/adtkcn/dayjs_go
 t := dayjs.Dayjs()
 ```
 
-1. t.Format() // 格式化
+1. t.Format() // 格式化： YYYY-MM-DD HH:mm:ss
 2. t.Add() // 增加时间
 3. t.Subtract() // 减少时间
 4. t.IsBefore(t2) // t 是否在 t2 之前
