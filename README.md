@@ -1,4 +1,4 @@
-## Installation, with go 1.18
+## Installation
 
 ```
 go get github.com/adtkcn/dayjs_go
