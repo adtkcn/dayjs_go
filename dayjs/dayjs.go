@@ -329,6 +329,71 @@ func (t *DayjsStruct) ToArray() []int {
 	return []int{t.Year, t.Month, t.Date, t.Hour, t.Minute, t.Second}
 }
 
+// 克隆
+func (t *DayjsStruct) Clone() *DayjsStruct {
+	return &DayjsStruct{
+		Time:   t.Time,
+		Year:   t.Year,
+		Month:  t.Month,
+		Date:   t.Date,
+		Hour:   t.Hour,
+		Minute: t.Minute,
+		Second: t.Second,
+	}
+}
+
+// StartOf
+func (t *DayjsStruct) StartOf(Type string) *DayjsStruct {
+	typeStr := strings.ToLower(Type)
+	switch typeStr {
+	case "year":
+		return t.Set("month", 1).Set("date", 1).Set("hour", 0).Set("minute", 0).Set("second", 0)
+	case "quarter":
+		panic("StartOf 暂不支持 quarter")
+		// return t.Set("month", 1).Set("date", 1).Set("hour", 0).Set("minute", 0).Set("second", 0)
+	case "month":
+		return t.Set("date", 1).Set("hour", 0).Set("minute", 0).Set("second", 0)
+	case "week":
+		panic("StartOf 暂不支持 week")
+		// return t.Set("weekday", 0).Set("hour", 0).Set("minute", 0).Set("second", 0)
+	case "date":
+		return t.Set("hour", 0).Set("minute", 0).Set("second", 0)
+	case "day":
+		return t.Set("hour", 0).Set("minute", 0).Set("second", 0)
+	case "hour":
+		return t.Set("minute", 0).Set("second", 0)
+	case "minute":
+		return t.Set("second", 0)
+	}
+	panic("Dayjs().StartOf(Type) Type Error ：" + Type)
+}
+
+// EndOf
+func (t *DayjsStruct) EndOf(Type string) *DayjsStruct {
+	typeStr := strings.ToLower(Type)
+	switch typeStr {
+	case "year":
+		return t.Set("month", 12).Set("date", 31).Set("hour", 23).Set("minute", 59).Set("second", 59)
+	case "quarter":
+		panic("EndOf 暂不支持 quarter")
+		// return t.Set("month", 3).Set("date", 31).Set("hour", 23).Set("minute", 59).Set("second", 59)
+	case "month":
+		return t.Set("date", 31).Set("hour", 23).Set("minute", 59).Set("second", 59)
+	case "week":
+		panic("EndOf 暂不支持 week")
+		// return t.Set("weekday", 6).Set("hour", 23).Set("minute", 59).Set("second", 59)
+	case "date":
+		return t.Set("hour", 23).Set("minute", 59).Set("second", 59)
+	case "day":
+		return t.Set("hour", 23).Set("minute", 59).Set("second", 59)
+	case "hour":
+		return t.Set("minute", 59).Set("second", 59)
+	case "minute":
+		return t.Set("second", 59)
+	}
+	panic("Dayjs().EndOf(Type) Type Error ：" + Type)
+}
+
 //获取某月天数
 func (t *DayjsStruct) DaysInMonth() int64 {
 	year := t.Year
@@ -363,6 +428,59 @@ func (t *DayjsStruct) DaysInMonth() int64 {
 	}
 	// 得出2月的天数
 	return int64(28)
+}
+
+// 获取季度
+func (t *DayjsStruct) Quarter() int {
+	month := t.Month
+	if month <= 3 {
+		return 1
+	} else if month <= 6 {
+		return 2
+	} else if month <= 9 {
+		return 3
+	} else {
+		return 4
+	}
+}
+
+// fromNow
+func (t *DayjsStruct) FromNow() string {
+	now := Dayjs()
+	diffYear := now.Year - t.Year
+	diffMonth := now.Month - t.Month
+	diffDate := now.Date - t.Date
+	diffHour := now.Hour - t.Hour
+	diffMinute := now.Minute - t.Minute
+	diffSecond := now.Second - t.Second
+	fmt.Println(diffYear, diffMonth, diffDate, diffHour, diffMinute, diffSecond)
+	if diffYear > 0 {
+		return fmt.Sprintf("%d年前", diffYear)
+	} else if diffYear < 0 {
+		return fmt.Sprintf("%d年后", -diffYear)
+	} else if diffMonth > 0 {
+		return fmt.Sprintf("%d个月前", diffMonth)
+	} else if diffMonth < 0 {
+		return fmt.Sprintf("%d个月后", -diffMonth)
+	} else if diffDate > 0 {
+		return fmt.Sprintf("%d天前", diffDate)
+	} else if diffDate < 0 {
+		return fmt.Sprintf("%d天后", -diffDate)
+	} else if diffHour > 0 {
+		return fmt.Sprintf("%d小时前", diffHour)
+	} else if diffHour < 0 {
+		return fmt.Sprintf("%d小时后", -diffHour)
+	} else if diffMinute > 0 {
+		return fmt.Sprintf("%d分钟前", diffMinute)
+	} else if diffMinute < 0 {
+		return fmt.Sprintf("%d分钟后", -diffMinute)
+	} else if diffSecond > 0 {
+		return fmt.Sprintf("%d秒前", diffSecond)
+	} else if diffSecond < 0 {
+		return fmt.Sprintf("%d秒后", -diffSecond)
+	} else {
+		return "刚刚"
+	}
 }
 
 // 获取最大时间
