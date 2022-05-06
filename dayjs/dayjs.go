@@ -16,9 +16,14 @@ type DayjsStruct struct {
 	Minute int `json:"minute"` //分钟
 	Second int `json:"second"` //秒
 
-	Time time.Time
+	Time time.Time `json:"-"`
 }
 
+/**
+* 解析时间
+* @param {string|*DayjsStruct|int64|int} timeStr 时间字符串
+* @param {*DayjsStruct} timeStr DayjsStruct时间
+ */
 func Dayjs(timeStr ...interface{}) *DayjsStruct {
 	dayTime := &DayjsStruct{}
 
@@ -32,6 +37,9 @@ func Dayjs(timeStr ...interface{}) *DayjsStruct {
 			dayTime.ParseUnix(timeStr[0].(int64))
 		case int:
 			dayTime.ParseUnix(int64(timeStr[0].(int)))
+		case *DayjsStruct:
+			dayTimetemplate := timeStr[0].(*DayjsStruct)
+			dayTime = dayTimetemplate.Clone()
 		default:
 			panic("时间格式有误")
 		}
@@ -453,7 +461,7 @@ func (t *DayjsStruct) FromNow() string {
 	diffHour := now.Hour - t.Hour
 	diffMinute := now.Minute - t.Minute
 	diffSecond := now.Second - t.Second
-	fmt.Println(diffYear, diffMonth, diffDate, diffHour, diffMinute, diffSecond)
+	// fmt.Println(diffYear, diffMonth, diffDate, diffHour, diffMinute, diffSecond)
 	if diffYear > 0 {
 		return fmt.Sprintf("%d年前", diffYear)
 	} else if diffYear < 0 {
