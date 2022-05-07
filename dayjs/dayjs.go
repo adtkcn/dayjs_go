@@ -22,27 +22,14 @@ type DayjsStruct struct {
 /**
 * 解析时间
 * @param {string|*DayjsStruct|int64|int} timeStr 时间字符串
-* @param {*DayjsStruct} timeStr DayjsStruct时间
  */
 func Dayjs(timeStr ...interface{}) *DayjsStruct {
 	dayTime := &DayjsStruct{}
 
 	if len(timeStr) == 1 {
 		// 待区分时间戳和字符串时间
+		dayTime.Parse(timeStr[0])
 
-		switch timeStr[0].(type) {
-		case string:
-			dayTime.Parse(fmt.Sprint(timeStr[0]))
-		case int64:
-			dayTime.ParseUnix(timeStr[0].(int64))
-		case int:
-			dayTime.ParseUnix(int64(timeStr[0].(int)))
-		case *DayjsStruct:
-			dayTimetemplate := timeStr[0].(*DayjsStruct)
-			dayTime = dayTimetemplate.Clone()
-		default:
-			panic("时间格式有误")
-		}
 	} else {
 		dayTime.Now()
 	}
@@ -91,8 +78,27 @@ func Min(dayjs ...*DayjsStruct) *DayjsStruct {
 	return &min
 }
 
+// 解析时间
+// @param {string|*DayjsStruct|int64|int} str 时间字符串
+func (t *DayjsStruct) Parse(str interface{}) *DayjsStruct {
+	switch str.(type) {
+	case string:
+		t.ParseString(fmt.Sprint(str))
+	case int64:
+		t.ParseUnix(str.(int64))
+	case int:
+		t.ParseUnix(int64(str.(int)))
+	case *DayjsStruct:
+		dayTimetemplate := str.(*DayjsStruct)
+		t = dayTimetemplate.Clone()
+	default:
+		panic("时间格式有误")
+	}
+	return t
+}
+
 // 解析时间，每个时间需要任意字符分开； YYYY年MM月DD HH时mm分ss秒
-func (t *DayjsStruct) Parse(str string) *DayjsStruct {
+func (t *DayjsStruct) ParseString(str string) *DayjsStruct {
 	re := regexp.MustCompile("[0-9]+")
 	timeArr := re.FindAllString(str, -1) //-1以表明您想要全部
 	if len(timeArr) > 6 || len(timeArr) == 0 {
@@ -134,7 +140,6 @@ func (t *DayjsStruct) Parse(str string) *DayjsStruct {
 // 解析秒级时间戳
 func (t *DayjsStruct) ParseUnix(unix int64) *DayjsStruct {
 	t.Time = time.Unix(unix, 0) // 一个参数是时间戳（秒），第二个参数是纳秒，设置0即可
-	fmt.Println("unix", unix, t.Time)
 	t.SetTime()
 	return t
 }
