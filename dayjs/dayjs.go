@@ -63,6 +63,34 @@ func ZeroFill(str interface{}, resultLen int) string {
 	return result
 }
 
+// 获取最大时间
+func Max(dayjs ...*DayjsStruct) *DayjsStruct {
+	var max DayjsStruct
+	for k, v := range dayjs {
+		if k == 0 {
+			max = *v
+		}
+		if v.IsAfter(&max) {
+			max = *v
+		}
+	}
+	return &max
+}
+
+// 获取最小时间
+func Min(dayjs ...*DayjsStruct) *DayjsStruct {
+	var min DayjsStruct
+	for k, v := range dayjs {
+		if k == 0 {
+			min = *v
+		}
+		if v.IsBefore(&min) {
+			min = *v
+		}
+	}
+	return &min
+}
+
 // 解析时间，每个时间需要任意字符分开； YYYY年MM月DD HH时mm分ss秒
 func (t *DayjsStruct) Parse(str string) *DayjsStruct {
 	re := regexp.MustCompile("[0-9]+")
@@ -439,16 +467,16 @@ func (t *DayjsStruct) DaysInMonth() int64 {
 }
 
 // 获取季度
-func (t *DayjsStruct) Quarter() int {
+func (t *DayjsStruct) Quarter() int64 {
 	month := t.Month
 	if month <= 3 {
-		return 1
+		return int64(1)
 	} else if month <= 6 {
-		return 2
+		return int64(2)
 	} else if month <= 9 {
-		return 3
+		return int64(3)
 	} else {
-		return 4
+		return int64(4)
 	}
 }
 
@@ -489,32 +517,4 @@ func (t *DayjsStruct) FromNow() string {
 	} else {
 		return "刚刚"
 	}
-}
-
-// 获取最大时间
-func Max(dayjs ...*DayjsStruct) *DayjsStruct {
-	var max DayjsStruct
-	for k, v := range dayjs {
-		if k == 0 {
-			max = *v
-		}
-		if v.IsAfter(&max) {
-			max = *v
-		}
-	}
-	return &max
-}
-
-// 获取最小时间
-func Min(dayjs ...*DayjsStruct) *DayjsStruct {
-	var min DayjsStruct
-	for k, v := range dayjs {
-		if k == 0 {
-			min = *v
-		}
-		if v.IsBefore(&min) {
-			min = *v
-		}
-	}
-	return &min
 }
