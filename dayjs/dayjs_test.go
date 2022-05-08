@@ -80,3 +80,73 @@ func TestMin(t *testing.T) {
 		t.Errorf("Max() failed. Got %s, expected %s", timeStr, gotStr)
 	}
 }
+
+func TestDiff(t *testing.T) {
+	timeStr := Dayjs("2020年02月28").Diff(Dayjs("2020年02月29"), "date")
+	gotStr := int64(-1)
+	if timeStr != gotStr {
+		t.Errorf("Diff() failed. Got %d, expected %d", timeStr, gotStr)
+	}
+}
+
+func TestIsBefore(t *testing.T) {
+	timeStr := Dayjs("2020年02月29 02:02:02").IsBefore(Dayjs("2020年02月29 02:02:03"))
+	gotStr := true
+	if timeStr != gotStr {
+		t.Errorf("IsBefore() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+
+	timeStr = Dayjs("2020年03月28").IsBefore(Dayjs("2020年02月29"))
+	gotStr = false
+	if timeStr != gotStr {
+		t.Errorf("IsBefore() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+
+	timeStr = Dayjs("2020年02月28").IsBefore(Dayjs("2020年02月29"), "date")
+	gotStr = true
+	if timeStr != gotStr {
+		t.Errorf("IsBefore() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+
+	timeStr = Dayjs("2020年02月28").IsBefore(Dayjs("2020年02月29"), "month")
+	gotStr = false
+	if timeStr != gotStr {
+		t.Errorf("IsBefore() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+	timeStr = Dayjs("2020年01月28").IsBefore(Dayjs("2020年02月29"), "month")
+	gotStr = true
+	if timeStr != gotStr {
+		t.Errorf("IsBefore() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+}
+
+func TestIsAfter(t *testing.T) {
+	timeStr := Dayjs("2020年02月29 02:02:02").IsAfter(Dayjs("2020年02月29 02:02:03"))
+	gotStr := false
+	if timeStr != gotStr {
+		t.Errorf("IsAfter() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+
+	timeStr = Dayjs("2020年03月28").IsAfter(Dayjs("2020年02月29"))
+	gotStr = true
+	if timeStr != gotStr {
+		t.Errorf("IsAfter() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+
+	timeStr = Dayjs("2020年02月28").IsAfter(Dayjs("2020年02月29"), "date")
+	gotStr = false
+	if timeStr != gotStr {
+		t.Errorf("IsAfter() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+
+	timeStr = Dayjs("2020年02月28").IsAfter(Dayjs("2020年02月29"), "month")
+	gotStr = false
+	if timeStr != gotStr {
+		t.Errorf("IsAfter() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+	timeStr = Dayjs("2020年01月28").IsAfter(Dayjs("2020年02月29"), "month")
+	gotStr = false
+	if timeStr != gotStr {
+		t.Errorf("IsAfter() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+}

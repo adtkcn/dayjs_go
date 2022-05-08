@@ -11,6 +11,8 @@ func main() {
 	dayTime := dayjs.Dayjs()
 	// dayTime.Now()
 	// dayTime.Parse("2022年02月28")
+	fmt.Println(dayTime)
+
 	fmt.Println(dayTime.StartOf("hour").FromNow())
 	fmt.Println(dayjs.Dayjs(dayTime).FromNow())
 

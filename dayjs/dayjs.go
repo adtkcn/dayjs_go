@@ -294,33 +294,77 @@ func (t *DayjsStruct) Unix() int64 {
 }
 
 // 如果 t 代表的时间点在 t2 之前，返回真；
-func (t *DayjsStruct) IsBefore(t2 *DayjsStruct) bool {
-	return t.Time.Before(t2.Time)
+func (t *DayjsStruct) IsBefore(t2 *DayjsStruct, Type ...string) bool {
+	typeStr := "millisecond"
+	if len(Type) == 1 && Type[0] != "" {
+		typeStr = strings.ToLower(Type[0])
+	}
+	diffVal := t.Diff(t2, typeStr)
+	// fmt.Println("diffVal", diffVal)
+	return diffVal < 0
+	// return t.Time.Before(t2.Time)
 }
 
 // 如果 t 代表的时间点在 t2 之后，返回真
-func (t *DayjsStruct) IsAfter(t2 *DayjsStruct) bool {
-	return t.Time.After(t2.Time)
+func (t *DayjsStruct) IsAfter(t2 *DayjsStruct, Type ...string) bool {
+	typeStr := "millisecond"
+	if len(Type) == 1 && Type[0] != "" {
+		typeStr = strings.ToLower(Type[0])
+	}
+	diffVal := t.Diff(t2, typeStr)
+	// fmt.Println("diffVal", diffVal)
+	return diffVal > 0
+	// return t.Time.After(t2.Time)
 }
 
 // 比较时间是否相等，相等返回真
-func (t *DayjsStruct) IsSame(t2 *DayjsStruct) bool {
-	return t.Time.Equal(t2.Time)
+func (t *DayjsStruct) IsSame(t2 *DayjsStruct, Type ...string) bool {
+	typeStr := "millisecond"
+	if len(Type) == 1 && Type[0] != "" {
+		typeStr = strings.ToLower(Type[0])
+	}
+	diffVal := t.Diff(t2, typeStr)
+	// fmt.Println("diffVal", diffVal)
+	return diffVal == 0
+	// return t.Time.Equal(t2.Time)
 }
 
 // 是否在两个时间范围之间
-func (t *DayjsStruct) IsBetween(t2 *DayjsStruct, t3 *DayjsStruct) bool {
-	return t.Time.After(t2.Time) && t.Time.Before(t3.Time)
+func (t *DayjsStruct) IsBetween(t2 *DayjsStruct, t3 *DayjsStruct, Type ...string) bool {
+	typeStr := "millisecond"
+	if len(Type) == 1 && Type[0] != "" {
+		typeStr = strings.ToLower(Type[0])
+	}
+	diffVal_2 := t.Diff(t2, typeStr)
+	diffVal_3 := t.Diff(t3, typeStr)
+
+	// fmt.Println("diffVal", diffVal_2, diffVal_3)
+	return diffVal_2 >= 0 && diffVal_3 <= 0
+	// return t.Time.After(t2.Time) && t.Time.Before(t3.Time)
 }
 
 // 相同或之前
-func (t *DayjsStruct) IsSameOrBefore(t2 *DayjsStruct) bool {
-	return t.Time.Before(t2.Time) || t.Time.Equal(t2.Time)
+func (t *DayjsStruct) IsSameOrBefore(t2 *DayjsStruct, Type ...string) bool {
+	typeStr := "millisecond"
+	if len(Type) == 1 && Type[0] != "" {
+		typeStr = strings.ToLower(Type[0])
+	}
+	diffVal := t.Diff(t2, typeStr)
+	// fmt.Println("diffVal", diffVal)
+	return diffVal <= 0
+	// return t.Time.Before(t2.Time) || t.Time.Equal(t2.Time)
 }
 
 // 相同或之后
-func (t *DayjsStruct) IsSameOrAfter(t2 *DayjsStruct) bool {
-	return t.Time.After(t2.Time) || t.Time.Equal(t2.Time)
+func (t *DayjsStruct) IsSameOrAfter(t2 *DayjsStruct, Type ...string) bool {
+	typeStr := "millisecond"
+	if len(Type) == 1 && Type[0] != "" {
+		typeStr = strings.ToLower(Type[0])
+	}
+	diffVal := t.Diff(t2, typeStr)
+	// fmt.Println("diffVal", diffVal)
+	return diffVal >= 0
+	// return t.Time.After(t2.Time) || t.Time.Equal(t2.Time)
 }
 
 // 差异
@@ -353,7 +397,6 @@ func (t *DayjsStruct) Diff(t2 *DayjsStruct, Type ...string) int64 {
 	case "year":
 		return (t.Unix() - t2.Unix()) / 60 / 60 / 24 / 365
 	}
-
 	return t.ValueOf() - t2.ValueOf()
 }
 
@@ -522,4 +565,9 @@ func (t *DayjsStruct) FromNow() string {
 	} else {
 		return "刚刚"
 	}
+}
+
+// fmt.Println自动调用
+func (t *DayjsStruct) String() string {
+	return t.Format("YYYY-MM-DD HH:mm:ss")
 }
