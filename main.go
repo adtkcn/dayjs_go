@@ -1,23 +1,18 @@
 package main
 
-import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/adtkcn/dayjs_go/dayjs"
-)
-
 func main() {
-	dayTime := dayjs.Dayjs()
+	// dayTime := dayjs.Dayjs()
 	// dayTime.Now()
-	// dayTime.Parse("2022年02月28")
-	fmt.Println(dayTime)
+	// t2 := dayTime.Parse("2022年02月28")
+	// t3 := dayTime.Parse(t2)
+	// fmt.Println(dayTime, t2, t3)
 
-	fmt.Println(dayTime.StartOf("hour").FromNow())
-	fmt.Println(dayjs.Dayjs(dayTime).FromNow())
+	// fmt.Println(dayTime.StartOf("hour").FromNow())
+	// fmt.Println(dayjs.Dayjs(dayTime))
+	// fmt.Println(dayjs.Dayjs(dayTime).FromNow())
 
-	s, _ := json.Marshal(dayjs.Dayjs(dayTime))
-	fmt.Println(string(s))
+	// s, _ := json.Marshal(dayjs.Dayjs(dayTime))
+	// fmt.Println(string(s))
 	// dayjs.Dayjs("2022年02月28")
 
 	// maxTime := dayjs.Max(dayjs.Dayjs().Now(), dayTime, dayjs.Dayjs().Parse("2022年02月28"))
