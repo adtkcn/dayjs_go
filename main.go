@@ -4,8 +4,8 @@ func main() {
 
 	// dayTime := dayjs.Dayjs()
 	// dayTime.Now()
-	// t2 := dayTime.Parse("2022年02月28")
-	// t3 := dayTime.Parse(t2)
+	// t2 := dayjs.Parse("2022年02月28")
+	// t3 := dayjs.Parse(t2)
 	// fmt.Println(dayTime)
 
 	// fmt.Println(dayTime.StartOf("hour").FromNow())
@@ -16,9 +16,9 @@ func main() {
 	// fmt.Println(string(s))
 	// dayjs.Dayjs("2022年02月28")
 
-	// maxTime := dayjs.Max(dayjs.Dayjs().Now(), dayTime, dayjs.Dayjs().Parse("2022年02月28"))
+	// maxTime := dayjs.Max(dayjs.Now(), dayTime, dayjs.Parse("2022年02月28"))
 	// fmt.Println(maxTime)
-	// minTime := dayjs.Min(dayjs.Dayjs().Now(), dayTime, dayjs.Dayjs().Parse("2022年02月28"))
+	// minTime := dayjs.Min(dayjs.Now(), dayTime, dayjs.Parse("2022年02月28"))
 	// fmt.Println(minTime.Set("Year", 2000))
 	// fmt.Println("Weekday", dayjs.Dayjs().Add(3, "date").Weekday())
 	// fmt.Println(minTime.Get("Year"))
