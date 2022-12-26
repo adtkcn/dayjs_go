@@ -62,7 +62,7 @@ dayjs.ParseUnixMilli( int64 ) 					// 解析毫秒级时间戳
 
 ```
 
-### 属性
+### 属性（只读/Readonly）
 
 1. Year
 2. Month
