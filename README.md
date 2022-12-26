@@ -21,9 +21,9 @@ t := dayjs.Dayjs()
 ```
 
 ```go
-t.Format() 			// 格式化： YYYY-MM-DD HH:mm:ss
-t.Add()		 		// 增加时间
-t.Subtract() 		// 减少时间
+
+
+// 判断，返回bool
 t.IsBefore(t2) 		// t 是否在 t2 之前
 t.IsAfter(t2) 		// t 是否在 t2 之后
 t.IsSame(t2) 		// t 是否与 t2 相同
@@ -31,8 +31,13 @@ t.IsBetween(t2,t3)  // t 是否在 t2 和 t3 之间
 t.IsSameOrBefore() 	// t 是否在 t2 之前或者与 t2 相同
 t.IsSameOrAfter() 	// t 是否在 t2 之后或者与 t2 相同
 t.IsLeapYear() 		// t 是否为闰年
-t.DaysInMonth() 	// t 的月份的天数
+
+// 设置
+t.Add()		 		// 增加时间
+t.Subtract() 		// 减少时间
 t.Set(Type,value) 	// 设置时间,Type 可以是"year","month","date","hour","minute","second"
+
+// 获取
 t.Get(Type) 		// 获取时间,Type 可以是"year","month","day","date","hour","minute","second"
 t.Weekday() 		// 星期几，0 是星期日
 t.ToArray() 		// 转换成数组 [year,month,day,hour,minute,second]
@@ -41,12 +46,14 @@ t.Clone() 			// 克隆
 t.StartOf(Type) 	// 开始时间,Type 可以是"year","month","date","hour","minute","second"
 t.EndOf(Type) 		// 结束时间,Type 可以是"year","month","date","hour","minute","second"
 t.Quarter() 		// 获取季度 1，2，3，4
+t.DaysInMonth() 	// t 的月份的天数
 t.FromNow() 		// 从现在开始返回相对时间的字符串。(2 小时前)
+t.Format() 			// 格式化： YYYY-MM-DD HH:mm:ss
 
 dayjs.Max(t2,t3,t4,...) // 最大值
 dayjs.Min(t2,t3,t4,...) // 最小值
 
-
+// 解析
 dayjs.Now() 			// 当前时间
 dayjs.Parse(interface) 	// 解析时间,支持ParseString和ParseUnix的参数
 dayjs.ParseString("2022年12月25日 23:59:59") 	// 解析字符串时间
