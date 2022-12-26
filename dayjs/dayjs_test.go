@@ -4,6 +4,10 @@ import (
 	"testing"
 )
 
+// 测试源码的文件名以 _test.go 结尾。
+// 测试函数的函数名以 Test 开头。
+// 函数签名为 func (t *testing.T)。
+
 func TestDayjs(t *testing.T) {
 	timeStr := Dayjs("2022年02月28").Format()
 	gotStr := "2022-02-28 00:00:00"
@@ -28,12 +32,13 @@ func TestDayjs(t *testing.T) {
 	}
 }
 func TestParse(t *testing.T) {
-	timeStr := Dayjs().Parse("2022年02月28").Format()
+	timeStr := Parse("2022年02月28").Format()
 	gotStr := "2022-02-28 00:00:00"
 	if timeStr != gotStr {
 		t.Errorf("Parse() failed. Got %s, expected %s", timeStr, gotStr)
 	}
 }
+
 func TestAdd(t *testing.T) {
 	timeStr := Dayjs("2022年02月28").Add(-2, "date").Subtract(2, "month").Format("YYYY年MM月DD HH时mm分ss秒")
 	gotStr := "2021年12月26 00时00分00秒"
@@ -148,5 +153,19 @@ func TestIsAfter(t *testing.T) {
 	gotStr = false
 	if timeStr != gotStr {
 		t.Errorf("IsAfter() failed. Got %t, expected %t", timeStr, gotStr)
+	}
+}
+
+func TestNow(t *testing.T) {
+	ti := Now()
+	t.Log("当前时间：", ti)
+}
+
+func TestParseUnixMilli(t *testing.T) {
+	timeStr := ParseUnixMilli(1672062168993).String()
+	gotStr := "2022-12-26 21:42:48"
+	// t.Log("ParseUnixMilli:", timeStr)
+	if timeStr != gotStr {
+		t.Errorf("ParseUnixMilli() failed. Got %s, expected %s", timeStr, gotStr)
 	}
 }

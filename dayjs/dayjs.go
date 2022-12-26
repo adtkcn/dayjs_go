@@ -2,7 +2,6 @@ package dayjs
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -24,132 +23,17 @@ type DayjsStruct struct {
 * @param {string|*DayjsStruct|int64|int} timeStr 时间字符串
  */
 func Dayjs(timeStr ...interface{}) *DayjsStruct {
-	dayTime := &DayjsStruct{}
 
-	if len(timeStr) == 1 {
+	if len(timeStr) >= 1 {
 		// 待区分时间戳和字符串时间
-		dayTime.Parse(timeStr[0])
-
+		return Parse(timeStr[0])
 	} else {
-		dayTime.Now()
+		return Now()
 	}
 
-	return dayTime
 }
 
-// 前置补零
-func ZeroFill(str interface{}, resultLen int) string {
-	newStr := fmt.Sprintf("%v", str)
-	if len(newStr) > resultLen || resultLen <= 0 {
-		return newStr
-	}
-	result := newStr
-	for i := 0; i < resultLen-len(newStr); i++ {
-		result = "0" + result
-	}
-	return result
-}
-
-// 获取最大时间
-func Max(dayjs ...*DayjsStruct) *DayjsStruct {
-	var max DayjsStruct
-	for k, v := range dayjs {
-		if k == 0 {
-			max = *v
-		}
-		if v.IsAfter(&max) {
-			max = *v
-		}
-	}
-	return &max
-}
-
-// 获取最小时间
-func Min(dayjs ...*DayjsStruct) *DayjsStruct {
-	var min DayjsStruct
-	for k, v := range dayjs {
-		if k == 0 {
-			min = *v
-		}
-		if v.IsBefore(&min) {
-			min = *v
-		}
-	}
-	return &min
-}
-
-// 解析时间
-// @param {string|*DayjsStruct|int64|int} str 时间字符串
-func (t *DayjsStruct) Parse(str interface{}) *DayjsStruct {
-	switch str.(type) {
-	case string:
-		t.ParseString(fmt.Sprint(str))
-	case int64:
-		t.ParseUnix(str.(int64))
-	case int:
-		t.ParseUnix(int64(str.(int)))
-	case *DayjsStruct:
-		dayTimetemplate := str.(*DayjsStruct)
-		t = dayTimetemplate.Clone()
-	default:
-		panic("时间格式有误")
-	}
-	return t
-}
-
-// 解析时间，每个时间需要任意字符分开； YYYY年MM月DD HH时mm分ss秒
-func (t *DayjsStruct) ParseString(str string) *DayjsStruct {
-	re := regexp.MustCompile("[0-9]+")
-	timeArr := re.FindAllString(str, -1) //-1以表明您想要全部
-	if len(timeArr) > 6 || len(timeArr) == 0 {
-		panic("时间格式最少需要一个时间")
-	}
-	year := fmt.Sprint(time.Now().Year()) //年
-	month := "01"                         //月
-	day := "01"                           //日
-	hour := "00"                          //小时
-	minute := "00"                        //分钟
-	second := "00"                        //秒
-
-	for key, val := range timeArr {
-		if key == 0 {
-			year = ZeroFill(val, 4)
-		} else if key == 1 {
-			month = ZeroFill(val, 2)
-		} else if key == 2 {
-			day = ZeroFill(val, 2)
-		} else if key == 3 {
-			hour = ZeroFill(val, 2)
-		} else if key == 4 {
-			minute = ZeroFill(val, 2)
-		} else if key == 5 {
-			second = ZeroFill(val, 2)
-		}
-	}
-	timeStr := year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second
-
-	strTime, err := time.Parse("2006-01-02 15:04:05", timeStr)
-	if err != nil {
-		panic(err)
-	}
-	t.Time = strTime
-	t.SetTime()
-	return t
-}
-
-// 解析秒级时间戳
-func (t *DayjsStruct) ParseUnix(unix int64) *DayjsStruct {
-	t.Time = time.Unix(unix, 0) // 一个参数是时间戳（秒），第二个参数是纳秒，设置0即可
-	t.SetTime()
-	return t
-}
-
-// 设置为当前时间
-func (t *DayjsStruct) Now() *DayjsStruct {
-	t.Time = time.Now() // 获取当前时间
-	t.SetTime()
-	return t
-}
+// TODO: 考虑换为私有
 func (t *DayjsStruct) SetTime() {
 	t.Year = t.Time.Year()        //年
 	t.Month = int(t.Time.Month()) //月
@@ -179,60 +63,63 @@ func (t *DayjsStruct) Format(format ...string) string {
 
 // 加上时间（传负数可以减）
 func (t *DayjsStruct) Add(num int, Type string) *DayjsStruct {
+	dayTime := t.Clone()
+
 	h1, _ := time.ParseDuration("1h")
 	m1, _ := time.ParseDuration("1m")
 	s1, _ := time.ParseDuration("1s")
 	typeStr := strings.ToLower(Type)
 	switch typeStr {
 	case "year":
-		t.Time = t.Time.AddDate(num, 0, 0)
+		dayTime.Time = dayTime.Time.AddDate(num, 0, 0)
 	case "month":
-		t.Time = t.Time.AddDate(0, num, 0)
+		dayTime.Time = dayTime.Time.AddDate(0, num, 0)
 	case "date":
-		t.Time = t.Time.AddDate(0, 0, num)
+		dayTime.Time = dayTime.Time.AddDate(0, 0, num)
 	case "day":
 		panic("Add 暂不支持 day")
 	case "hour":
-		t.Time = t.Time.Add(h1 * time.Duration(num))
+		dayTime.Time = dayTime.Time.Add(h1 * time.Duration(num))
 	case "minute":
-		t.Time = t.Time.Add(m1 * time.Duration(num))
+		dayTime.Time = dayTime.Time.Add(m1 * time.Duration(num))
 	case "second":
-		t.Time = t.Time.Add(s1 * time.Duration(num))
+		dayTime.Time = dayTime.Time.Add(s1 * time.Duration(num))
 	}
-	// t.Time.Add(year)
-	t.SetTime()
-	return t
+	dayTime.SetTime()
+	return dayTime
 }
 
 // 减去时间（传负数可以加）
 func (t *DayjsStruct) Subtract(num int, Type string) *DayjsStruct {
+	dayTime := t.Clone()
+
 	h1, _ := time.ParseDuration("-1h")
 	m1, _ := time.ParseDuration("-1m")
 	s1, _ := time.ParseDuration("-1s")
 	typeStr := strings.ToLower(Type)
 	switch typeStr {
 	case "year":
-		t.Time = t.Time.AddDate(-num, 0, 0)
+		dayTime.Time = dayTime.Time.AddDate(-num, 0, 0)
 	case "month":
-		t.Time = t.Time.AddDate(0, -num, 0)
+		dayTime.Time = dayTime.Time.AddDate(0, -num, 0)
 	case "date":
-		t.Time = t.Time.AddDate(0, 0, -num)
+		dayTime.Time = dayTime.Time.AddDate(0, 0, -num)
 	case "day":
 		panic("Add 暂不支持 day")
 	case "hour":
-		t.Time = t.Time.Add(h1 * time.Duration(num))
+		dayTime.Time = dayTime.Time.Add(h1 * time.Duration(num))
 	case "minute":
-		t.Time = t.Time.Add(m1 * time.Duration(num))
+		dayTime.Time = dayTime.Time.Add(m1 * time.Duration(num))
 	case "second":
-		t.Time = t.Time.Add(s1 * time.Duration(num))
+		dayTime.Time = dayTime.Time.Add(s1 * time.Duration(num))
 	}
-	// t.Time.Add(year)
-	t.SetTime()
-	return t
+	dayTime.SetTime()
+	return dayTime
 }
 
 // 设置年月日时分秒，
 func (t *DayjsStruct) Set(Type string, value int) *DayjsStruct {
+	t = t.Clone()
 	typeStr := strings.ToLower(Type)
 	switch typeStr {
 	case "year":
@@ -275,7 +162,6 @@ func (t *DayjsStruct) Get(Type string) int64 {
 		return int64(t.Second)
 	}
 	panic("Dayjs().Get(Type) Type Error ：" + Type)
-	// return int64(0)
 }
 
 // 周几0-6，0是星期日
@@ -415,7 +301,7 @@ func (t *DayjsStruct) ToArray() []int {
 
 // 克隆
 func (t *DayjsStruct) Clone() *DayjsStruct {
-	return &DayjsStruct{
+	time := &DayjsStruct{
 		Time:   t.Time,
 		Year:   t.Year,
 		Month:  t.Month,
@@ -424,10 +310,13 @@ func (t *DayjsStruct) Clone() *DayjsStruct {
 		Minute: t.Minute,
 		Second: t.Second,
 	}
+	return time
 }
 
 // StartOf
+// TODO: 调用了过多Set,每一个Set创建了一个示例
 func (t *DayjsStruct) StartOf(Type string) *DayjsStruct {
+
 	typeStr := strings.ToLower(Type)
 	switch typeStr {
 	case "year":
@@ -453,6 +342,7 @@ func (t *DayjsStruct) StartOf(Type string) *DayjsStruct {
 }
 
 // EndOf
+// TODO: 调用了过多Set,每一个Set创建了一个示例
 func (t *DayjsStruct) EndOf(Type string) *DayjsStruct {
 	typeStr := strings.ToLower(Type)
 	switch typeStr {
@@ -478,7 +368,7 @@ func (t *DayjsStruct) EndOf(Type string) *DayjsStruct {
 	panic("Dayjs().EndOf(Type) Type Error ：" + Type)
 }
 
-//获取某月天数
+// 获取某月天数
 func (t *DayjsStruct) DaysInMonth() int64 {
 	year := t.Year
 	month := t.Month
@@ -492,7 +382,7 @@ func (t *DayjsStruct) DaysInMonth() int64 {
 		10: true,
 		12: true,
 	}
-	if day31[month] == true {
+	if day31[month] {
 		return int64(31)
 	}
 	// 有30天的月份
@@ -502,7 +392,7 @@ func (t *DayjsStruct) DaysInMonth() int64 {
 		9:  true,
 		11: true,
 	}
-	if day30[month] == true {
+	if day30[month] {
 		return int64(30)
 	}
 	// 计算是平年还是闰年
