@@ -2,7 +2,6 @@ package dayjs
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -24,136 +23,14 @@ type DayjsStruct struct {
 * @param {string|*DayjsStruct|int64|int} timeStr 时间字符串
  */
 func Dayjs(timeStr ...interface{}) *DayjsStruct {
-	dayTime := &DayjsStruct{}
 
 	if len(timeStr) >= 1 {
 		// 待区分时间戳和字符串时间
-		return dayTime.Parse(timeStr[0])
-
+		return Parse(timeStr[0])
 	} else {
-		return dayTime.Now()
+		return Now()
 	}
 
-}
-
-// 前置补零
-func ZeroFill(str interface{}, resultLen int) string {
-	newStr := fmt.Sprintf("%v", str)
-	if len(newStr) > resultLen || resultLen <= 0 {
-		return newStr
-	}
-	result := newStr
-	for i := 0; i < resultLen-len(newStr); i++ {
-		result = "0" + result
-	}
-	return result
-}
-
-// 获取最大时间
-func Max(dayjs ...*DayjsStruct) *DayjsStruct {
-	var max DayjsStruct
-	for k, v := range dayjs {
-		if k == 0 {
-			max = *v
-		}
-		if v.IsAfter(&max) {
-			max = *v
-		}
-	}
-	return &max
-}
-
-// 获取最小时间
-func Min(dayjs ...*DayjsStruct) *DayjsStruct {
-	var min DayjsStruct
-	for k, v := range dayjs {
-		if k == 0 {
-			min = *v
-		}
-		if v.IsBefore(&min) {
-			min = *v
-		}
-	}
-	return &min
-}
-
-// 解析时间
-// @param {string|*DayjsStruct|int64|int} str 时间字符串
-func (t *DayjsStruct) Parse(str interface{}) *DayjsStruct {
-	var dayjsStruct *DayjsStruct
-
-	switch str.(type) {
-	case string:
-		dayjsStruct = t.ParseString(fmt.Sprint(str))
-	case int64:
-		dayjsStruct = t.ParseUnix(str.(int64))
-	case int:
-		dayjsStruct = t.ParseUnix(int64(str.(int)))
-	case *DayjsStruct:
-		dayTimetemplate := str.(*DayjsStruct)
-		dayjsStruct = dayTimetemplate.Clone()
-	default:
-		panic("时间格式有误")
-	}
-	return dayjsStruct
-}
-
-// 解析时间，每个时间需要任意字符分开； YYYY年MM月DD HH时mm分ss秒
-func (t *DayjsStruct) ParseString(str string) *DayjsStruct {
-	dayjsStruct := &DayjsStruct{}
-
-	re := regexp.MustCompile("[0-9]+")
-	timeArr := re.FindAllString(str, -1) //-1以表明您想要全部
-	if len(timeArr) > 6 || len(timeArr) == 0 {
-		panic("时间格式最少需要一个时间")
-	}
-	year := fmt.Sprint(time.Now().Year()) //年
-	month := "01"                         //月
-	day := "01"                           //日
-	hour := "00"                          //小时
-	minute := "00"                        //分钟
-	second := "00"                        //秒
-
-	for key, val := range timeArr {
-		if key == 0 {
-			year = ZeroFill(val, 4)
-		} else if key == 1 {
-			month = ZeroFill(val, 2)
-		} else if key == 2 {
-			day = ZeroFill(val, 2)
-		} else if key == 3 {
-			hour = ZeroFill(val, 2)
-		} else if key == 4 {
-			minute = ZeroFill(val, 2)
-		} else if key == 5 {
-			second = ZeroFill(val, 2)
-		}
-	}
-	timeStr := year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second
-
-	strTime, err := time.Parse("2006-01-02 15:04:05", timeStr)
-	if err != nil {
-		panic(err)
-	}
-	dayjsStruct.Time = strTime
-	dayjsStruct.SetTime()
-	return dayjsStruct
-}
-
-// 解析秒级时间戳
-func (t *DayjsStruct) ParseUnix(unix int64) *DayjsStruct {
-	dayjsStruct := &DayjsStruct{}
-	dayjsStruct.Time = time.Unix(unix, 0) // 一个参数是时间戳（秒），第二个参数是纳秒，设置0即可
-	dayjsStruct.SetTime()
-	return dayjsStruct
-}
-
-// 设置为当前时间
-func (t *DayjsStruct) Now() *DayjsStruct {
-	dayjsStruct := &DayjsStruct{}
-	dayjsStruct.Time = time.Now() // 获取当前时间
-	dayjsStruct.SetTime()
-	return dayjsStruct
 }
 
 // TODO: 考虑换为私有

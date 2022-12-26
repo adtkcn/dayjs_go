@@ -1,11 +1,12 @@
 package main
 
 func main() {
+
 	// dayTime := dayjs.Dayjs()
 	// dayTime.Now()
 	// t2 := dayTime.Parse("2022年02月28")
 	// t3 := dayTime.Parse(t2)
-	// fmt.Println(dayTime, t2, t3)
+	// fmt.Println(dayTime)
 
 	// fmt.Println(dayTime.StartOf("hour").FromNow())
 	// fmt.Println(dayjs.Dayjs(dayTime))
